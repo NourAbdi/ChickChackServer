@@ -2,7 +2,7 @@ const url = require("url");
 const functions = require("firebase-functions");
 
 const admin = require('firebase-admin');
-const serviceAccount = require('./chickchack-3069a-firebase-adminsdk-zsh9k-30eb053b4a.json');
+const serviceAccount = require('./service_account.json');
 
 // Initialize the Firebase Admin SDK
 admin.initializeApp({
