@@ -1,0 +1,1 @@
+const { mocks, addMockImage } = require("./mock");
