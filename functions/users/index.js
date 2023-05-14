@@ -11,19 +11,21 @@ admin.initializeApp({
 // Get a reference to your Firestore database
 const db = admin.firestore();
 
-module.exports.addUser = (uid, email) => {
-  const userRef = db.collection("users").doc(uid);
-  userRef
-    .set({
-      email,
-    })
-    .then(() => {
-      console.log(`User with uid: ${uid} added to the database`);
-    })
-    .catch((error) => {
-      console.error("Error adding user to database:", error);
-    });
-};
+exports.addUser = functions.auth.user().onCreate(async (user) => {
+    try {
+      const { uid, email } = user;
+      const userData = {
+        email,
+        createdAt: admin.firestore.FieldValue.serverTimestamp(),
+      };
+      const userDocRef = admin.firestore().collection("users").doc(uid);
+      await userDocRef.set(userData);
+      return true;
+    } catch (error) {
+      console.error("Error adding user data", error);
+      return false;
+    }
+  });
 
 module.exports.getUsers = (request, response) => {
   const usersRef = db.collection("users");

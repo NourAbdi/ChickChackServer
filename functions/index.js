@@ -2,7 +2,7 @@ const functions = require("firebase-functions");
 const { geocodeRequest } = require("./geocode");
 const { placesRequest } = require("./places");
 const { payRequest } = require("./pay");
-const { getUsers, addUser } = require("./users");
+const { getUsers,addUser } = require("./users");
 
 const { Client } = require("@googlemaps/google-maps-services-js");
 // const stripeClient = require("stripe")(functions.config().stripe.key);
@@ -29,3 +29,4 @@ exports.users = functions.https.onRequest((request, response) => {
     response.status(405).send("Method Not Allowed");
   }
 });
+
