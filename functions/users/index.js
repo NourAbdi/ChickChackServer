@@ -1,21 +1,49 @@
-const functions = require("firebase-functions");
-const admin = require("firebase-admin");
+const admin = require('firebase-admin');
+const serviceAccount = require('./service_account');
 
-admin.initializeApp();
+// Initialize the Firebase Admin SDK
+admin.initializeApp({
+    credential: admin.credential.cert(serviceAccount)
+});
 
-exports.addUser = functions.auth.user().onCreate(async (user) => {
-    try {
-      const { uid, email } = user;
-      const userData = {
-        email,
-        createdAt: admin.firestore.FieldValue.serverTimestamp(),
-      };
-      const userDocRef = admin.firestore().collection("users").doc(uid);
-      await userDocRef.set(userData);
-      return true;
-    } catch (error) {
-      console.error("Error adding user data", error);
-      return false;
-    }
-  });
-  
+// Get a reference to your Firestore database
+const db = admin.firestore();
+
+exports.getUsers = (request, response) => {
+    const usersRef = db.collection('users');
+    usersRef.get()
+        .then(snapshot => {
+            const users = [];
+            snapshot.forEach(doc => {
+                users.push(doc.data());
+            });
+            response.send(users);
+        })
+        .catch(error => {
+            console.error('Error getting users:', error);
+            response.status(500).send('Error getting users');
+        });
+};
+
+exports.addUser = (request, response) => {
+    const body = request.body;
+    const { email, password, firstName, lastName } = body;
+    admin.auth().createUser({ email, password })
+        .then(userRecord => {
+            const uid = userRecord.uid;
+            const usersRef = db.collection('users');
+            const data = { uid, email, firstName, lastName };
+            usersRef.doc(uid).set(data)
+                .then(() => {
+                    response.send(`User ${uid} created`);
+                })
+                .catch(error => {
+                    console.error('Error adding user:', error);
+                    response.status(500).send('Error adding user');
+                });
+        })
+        .catch(error => {
+            console.error('Error creating user:', error);
+            response.status(500).send('Error creating user');
+        });
+};
