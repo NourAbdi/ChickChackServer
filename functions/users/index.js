@@ -27,19 +27,19 @@ exports.addUser = functions.auth.user().onCreate(async (user) => {
     }
   });
 
-module.exports.getUsers = (request, response) => {
-  const usersRef = db.collection("users");
-  usersRef
-    .get()
-    .then((snapshot) => {
-      const users = [];
-      snapshot.forEach((doc) => {
-        users.push({ id: doc.id, ...doc.data() });
-      });
-      response.send(users);
-    })
-    .catch((error) => {
-      console.error("Error getting users:", error);
-      response.status(500).send("Error getting users");
-    });
-};
+// module.exports.getUsers = (request, response) => {
+//   const usersRef = db.collection("users");
+//   usersRef
+//     .get()
+//     .then((snapshot) => {
+//       const users = [];
+//       snapshot.forEach((doc) => {
+//         users.push({ id: doc.id, ...doc.data() });
+//       });
+//       response.send(users);
+//     })
+//     .catch((error) => {
+//       console.error("Error getting users:", error);
+//       response.status(500).send("Error getting users");
+//     });
+// };
