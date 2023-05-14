@@ -28,6 +28,19 @@ collectionRef.add({
 
 
 
-module.exports.getusers = (request, response) => {
-    
+module.exports.getUsers = (request, response) => {
+    const usersRef = db.collection('users');
+    usersRef.get()
+        .then(snapshot => {
+            const users = [];
+            snapshot.forEach(doc => {
+                users.push(doc.data());
+            });
+            response.send(users);
+        })
+        .catch(error => {
+            console.error('Error getting users:', error);
+            response.status(500).send('Error getting users');
+        });
+
 };

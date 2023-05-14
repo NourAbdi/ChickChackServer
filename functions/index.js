@@ -2,7 +2,7 @@ const functions = require("firebase-functions");
 const { geocodeRequest } = require("./geocode");
 const { placesRequest } = require("./places");
 const { payRequest } = require("./pay");
-const { getusers } = require("./users");
+const { getUsers } = require("./users");
 
 const { Client } = require("@googlemaps/google-maps-services-js");
 // const stripeClient = require("stripe")(functions.config().stripe.key);
@@ -21,7 +21,7 @@ exports.pay = functions.https.onRequest((request, response) => {
 });
 
 exports.users = functions.https.onRequest((request, response) => {
-  getusers(request, response);
+  getUsers(request, response);
 });
 
 
