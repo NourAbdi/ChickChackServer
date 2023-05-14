@@ -1,3 +1,6 @@
+const url = require("url");
+const functions = require("firebase-functions");
+
 const admin = require('firebase-admin');
 const serviceAccount = require('./chickchack-3069a-firebase-adminsdk-zsh9k-30eb053b4a.json');
 
@@ -21,3 +24,10 @@ collectionRef.add({
     .catch(error => {
         console.error('Error adding document:', error);
     });
+
+
+
+
+module.exports.getusers = (request, response) => {
+    
+};
