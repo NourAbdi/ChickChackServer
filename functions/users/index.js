@@ -26,24 +26,34 @@ exports.getUsers = (request, response) => {
 };
 
 exports.addUser = (request, response) => {
-    const body = request.body;
-    const { email, password, firstName, lastName } = body;
-    admin.auth().createUser({ email, password })
-        .then(userRecord => {
-            const uid = userRecord.uid;
-            const usersRef = db.collection('users');
-            const data = { uid, email, firstName, lastName };
-            usersRef.doc(uid).set(data)
-                .then(() => {
-                    response.send(`User ${uid} created`);
-                })
-                .catch(error => {
-                    console.error('Error adding user:', error);
-                    response.status(500).send('Error adding user');
-                });
-        })
-        .catch(error => {
-            console.error('Error creating user:', error);
-            response.status(500).send('Error creating user');
-        });
-};
+    const { uid, email } = request.body;
+  
+    // Create a reference to the users collection in Firestore
+    const usersRef = db.collection('users');
+  
+    // Check if a user with the given UID already exists in Firestore
+    usersRef.doc(uid).get()
+      .then(doc => {
+        if (doc.exists) {
+          // If the user already exists, send an error response
+          response.status(400).send('User already exists');
+        } else {
+          // If the user doesn't exist, add the user to Firestore
+          usersRef.doc(uid).set({ email })
+            .then(() => {
+              // Send a success response
+              response.send(`User ${uid} added to Firestore`);
+            })
+            .catch(error => {
+              // If there's an error, send an error response
+              console.error('Error adding user to Firestore:', error);
+              response.status(500).send('Error adding user to Firestore');
+            });
+        }
+      })
+      .catch(error => {
+        // If there's an error, send an error response
+        console.error('Error checking if user exists:', error);
+        response.status(500).send('Error checking if user exists');
+      });
+  };
