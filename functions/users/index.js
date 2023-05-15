@@ -27,33 +27,39 @@ exports.getUsers = (request, response) => {
 
 exports.addUser = (request, response) => {
     const { uid, email } = request.body;
-  
+
+    if (!uid) {
+        response.status(400).send('Missing uid');
+        return;
+    }
+
     // Create a reference to the users collection in Firestore
     const usersRef = db.collection('users');
-  
+
     // Check if a user with the given UID already exists in Firestore
     usersRef.doc(uid).get()
-      .then(doc => {
-        if (doc.exists) {
-          // If the user already exists, send an error response
-          response.status(400).send('User already exists');
-        } else {
-          // If the user doesn't exist, add the user to Firestore
-          usersRef.doc(uid).set({ email })
-            .then(() => {
-              // Send a success response
-              response.send(`User ${uid} added to Firestore`);
-            })
-            .catch(error => {
-              // If there's an error, send an error response
-              console.error('Error adding user to Firestore:', error);
-              response.status(500).send('Error adding user to Firestore');
-            });
-        }
-      })
-      .catch(error => {
-        // If there's an error, send an error response
-        console.error('Error checking if user exists:', error);
-        response.status(500).send('Error checking if user exists');
-      });
-  };
+        .then(doc => {
+            if (doc.exists) {
+                // If the user already exists, send an error response
+                response.status(400).send('User already exists');
+            } else {
+                // If the user doesn't exist, add the user to Firestore
+                usersRef.doc(uid).set({ email })
+                    .then(() => {
+                        // Send a success response
+                        response.send(`User ${uid} added to Firestore`);
+                    })
+                    .catch(error => {
+                        // If there's an error, send an error response
+                        console.error('Error adding user to Firestore:', error);
+                        response.status(500).send('Error adding user to Firestore');
+                    });
+            }
+        })
+        .catch(error => {
+            // If there's an error, send an error response
+            console.error('Error checking if user exists:', error);
+            response.status(500).send('Error checking if user exists');
+        });
+};
+
