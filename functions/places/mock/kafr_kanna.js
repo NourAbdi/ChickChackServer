@@ -99,22 +99,19 @@ module.exports = {
         },
       ],
       open:"true",
-
-      time_to_deliver:"30",
-      delivery_cost:"30",
-
+      DeliveryInfo:{
+        time_to_deliver:"30",
+        delivery_cost:"30",
+      },
       set:"true",
       delivery:"true",
 
-
+      takeOrder:{
+        Takeaway:false,
+        Delivery:false,
+        DineIn:true,
+      },
       //menu is hrer !!
-      takeOrder:
-        {
-          Takeaway:false,
-          Delivery:false,
-          DineIn:true,
-      
-        },
       menu:[
         {
           SideAddition:[
@@ -207,7 +204,10 @@ module.exports = {
         "point_of_interest",
         "establishment",
       ],
-
+      DeliveryInfo:{
+        time_to_deliver:"30",
+        delivery_cost:"30",
+      },
       takeOrder:{
         Takeaway:true,
         Delivery:true,
