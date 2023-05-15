@@ -12,13 +12,13 @@ exports.geocode = functions.https.onRequest((request, response) => {
   geocodeRequest(request, response);
 });
 
-// exports.placesNearby = functions.https.onRequest((request, response) => {
-  // placesRequest(request, response);
-// });
+exports.placesNearby = functions.https.onRequest((request, response) => {
+  placesRequest(request, response);
+});
 
-// exports.pay = functions.https.onRequest((request, response) => {
-  // payRequest(request, response, stripeClient);
-// });
+exports.pay = functions.https.onRequest((request, response) => {
+  payRequest(request, response, stripeClient);
+});
 
 exports.addUser = functions.https.onRequest((request, response) => {
   addUser(request, response);
