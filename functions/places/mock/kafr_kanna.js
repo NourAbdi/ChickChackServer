@@ -2,6 +2,8 @@ module.exports = {
   html_attributions: [],
   next_page_token: "some token",
   results: [
+
+    // 1 resturant
     {
       business_status: "OPERATIONAL",
       geometry: {
@@ -22,7 +24,7 @@ module.exports = {
       },
       icon:
         "https://maps.gstatic.com/mapfiles/place_api/icons/v1/png_71/restaurant-71.png",
-      name: "Acre Fish market® Kafr Kanna",
+      name: "Acre Fish market Kafr Kanna",
       opening_hours: {
         open_now: true,
       },
@@ -63,7 +65,7 @@ module.exports = {
         {
           day:"Sunday",
           start: "08:00",
-          end: "16:00",
+          end: "23:00",
         },
         {
           day:"Monday",
@@ -88,7 +90,7 @@ module.exports = {
         {
           day:"Friday",
           start: "08:00",
-          end: "16:00",
+          end: "23:00",
         },
         {
           day:"Suterday",
@@ -104,32 +106,56 @@ module.exports = {
       set:"true",
       delivery:"true",
 
+
+      //menu is hrer !!
+      takeOrder:{
+          Takeaway:true,
+          Delivery:true,
+          DineIn:true,
+      
+        },
       menu:[
         {
-          type:"mokabelat",
-          name:"chips",
-          price: "20",
-          photo:"",
+          SideAddition:[
+            {
+              name:"chips",
+              price: "20",
+              photo:"",
+            },
+          ],
         },
-        {
-          name:"salmon",
-          price: "50",
-          photo:"",
-        },
-        {
-          name:"seabream",
-          price: "50",
-          photo:"",
-        },
-        {
-          name:"seafood",
-          price: "50",
-          photo:"",
-        },
-      ],
 
-    },
+        {
+          SeaFood:[
+            {
+              name:"salmon",
+              price: "100",
+              photo:"",
+            },
 
+            {
+              name:"seabream",
+              price: "200",
+              photo:"",
+            },
+
+            {
+              name:"fish",
+              price: "150",
+              photo:"",
+            },
+
+            {
+              name:"Kalmari",
+              price: "300",
+              photo:"",
+            },
+          ]
+        },
+    ]
+  },
+    //--------------------------------------------------------------------------------------------------------
+    // 2 resturant
     {
       business_status: "OPERATIONAL",
       geometry: {
@@ -180,6 +206,38 @@ module.exports = {
         "point_of_interest",
         "establishment",
       ],
+
+      takeOrder:{
+        Takeaway:true,
+        Delivery:true,
+        DineIn:true,
+    
+      },
+     //menu is hrer !!
+      menu:[
+        {
+        SideAddition:[
+          {
+            name:"Onion Rings",
+            price: "20",
+            photo:"",
+          },
+      ],
+        SeaFood:[
+          {
+            name:"salmon",
+            price: "100",
+            photo:"",
+          },
+
+          {
+            name:"lobster",
+            price: "200",
+            photo:"",
+          }
+        ]
+      }
+    ],
       user_ratings_total: 2624,
       vicinity: "401 North Wabash Avenue, Kafr Kanna",
     },
