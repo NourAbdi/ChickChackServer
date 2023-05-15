@@ -108,9 +108,10 @@ module.exports = {
 
 
       //menu is hrer !!
-      takeOrder:{
-          Takeaway:true,
-          Delivery:true,
+      takeOrder:
+        {
+          Takeaway:false,
+          Delivery:false,
           DineIn:true,
       
         },
@@ -213,6 +214,43 @@ module.exports = {
         DineIn:true,
     
       },
+      working_hours:[
+        {
+          day:"Sunday",
+          start: "08:00",
+          end: "23:00",
+        },
+        {
+          day:"Monday",
+          start: "08:00",
+          end: "16:00",
+        },
+        {
+          day:"Tuesday",
+          start: "08:00",
+          end: "16:00",
+        },
+        {
+          day:"Wednesday",
+          start: "08:00",
+          end: "16:00",
+        },
+        {
+          day:"Thursday",
+          start: "08:00",
+          end: "16:00",
+        },
+        {
+          day:"Friday",
+          start: "08:00",
+          end: "23:00",
+        },
+        {
+          day:"Suterday",
+          start: "08:00",
+          end: "16:00",
+        },
+      ],
      //menu is hrer !!
       menu:[
         {
