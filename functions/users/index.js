@@ -26,40 +26,34 @@ exports.getUsers = (request, response) => {
 };
 
 exports.addUser = (request, response) => {
-    const { uid, email } = request.body;
-
-    if (!uid) {
-        response.status(400).send('Missing uid');
-        return;
-    }
-
-    // Create a reference to the users collection in Firestore
-    const usersRef = db.collection('users');
-
-    // Check if a user with the given UID already exists in Firestore
-    usersRef.doc(uid).get()
-        .then(doc => {
-            if (doc.exists) {
-                // If the user already exists, send an error response
-                response.status(400).send('User already exists');
+    console.log("gggggggggggggggggggggggggggggggggggggggggggggggggggggggg");
+    const { email, role } = request.query;
+    console.log( email, role);
+    admin.auth().getUserByEmail(email)
+        .then(async userRecord => {
+            const uid = userRecord.uid;
+            const usersRef = db.collection('users');
+            const doc = usersRef.doc(uid);
+            const snapshot = await doc.get();
+            if (snapshot.exists) {
+                const message = `User with email ${email} already exists`;
+                console.warn(message);
+                response.status(400).send({ success: false, message });
             } else {
-                // If the user doesn't exist, add the user to Firestore
-                usersRef.doc(uid).set({ email })
-                    .then(() => {
-                        // Send a success response
-                        response.send(`User ${uid} added to Firestore`);
-                    })
-                    .catch(error => {
-                        // If there's an error, send an error response
-                        console.error('Error adding user to Firestore:', error);
-                        response.status(500).send('Error adding user to Firestore');
-                    });
+                const { displayName } = userRecord;
+                const userData = {
+                    email,
+                    role: role || 'client', // Set default role to "client" if role parameter is not provided
+                    ...(displayName && { name: displayName })
+                };
+                await doc.set(userData);
+                const message = `User with email ${email} and role ${userData.role} added successfully`;
+                console.log(message);
+                response.send({ success: true, message });
             }
         })
         .catch(error => {
-            // If there's an error, send an error response
-            console.error('Error checking if user exists:', error);
-            response.status(500).send('Error checking if user exists');
+            console.error('Error adding user:', error);
+            response.status(500).send({ success: false, message: 'Error adding user' });
         });
 };
-
