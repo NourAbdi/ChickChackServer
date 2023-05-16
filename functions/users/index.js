@@ -10,6 +10,7 @@ admin.initializeApp({
 const db = admin.firestore();
 
 exports.getUsers = (request, response) => {
+    console.log("you are in getUsers method !");
     const usersRef = db.collection('users');
     usersRef.get()
         .then(snapshot => {
@@ -26,37 +27,63 @@ exports.getUsers = (request, response) => {
 };
 
 exports.addUser = (request, response) => {
-    const { email, role } = request.query;
-    const uid = request.user.uid; // Get the uid from the Firebase Auth token
+    const { uid, email, role } = request.body;
+    console.log(`Adding user: email=${email}, role=${role}`);
+
     const usersRef = db.collection('users');
-    const doc = usersRef.doc(uid);
-    doc.get()
-      .then((snapshot) => {
-        if (snapshot.exists) {
-          const message = `User with email ${email} already exists`;
-          console.warn(message);
-          response.status(400).send({ success: false, message });
-        } else {
-          const userData = {
-            email,
-            role: role || 'client', // Set default role to "client" if role parameter is not provided
-            uid // Include the uid in the user data
-          };
-          doc.set(userData)
-            .then(() => {
-              const message = `User with email ${email} and role ${userData.role} added successfully`;
-              console.log(message);
-              response.send({ success: true, message });
-            })
-            .catch((error) => {
-              console.error('Error adding user:', error);
-              response.status(500).send({ success: false, message: 'Error adding user' });
-            });
-        }
-      })
-      .catch((error) => {
-        console.error('Error adding user:', error);
-        response.status(500).send({ success: false, message: 'Error adding user' });
-      });
-  };
-  
+
+    usersRef
+        .doc(uid) // Use uid as the document name
+        .get()
+        .then((docSnapshot) => {
+            if (docSnapshot.exists) {
+                const message = ` with email ${email} already exists`;
+                console.warn(message);
+                response.status(400).send({ success: false, message });
+            } else {
+                const userData = {
+                    uid,
+                    email,
+                    role
+                };
+
+                usersRef
+                    .doc(uid) // Use uid as the document name
+                    .set(userData)
+                    .then(() => {
+                        const message = `User with email ${email} and role ${userData.role} added successfully`;
+                        console.log(message);
+                        response.send({ success: true, message });
+                    })
+                    .catch((error) => {
+                        console.error(`Error adding user: ${error}`);
+                        response.status(500).send({ success: false, message: 'Error adding user' });
+                    });
+            }
+        })
+        .catch((error) => {
+            console.error(`Error checking user existence: ${error}`);
+            response.status(500).send({ success: false, message: 'Error checking user existence' });
+        });
+};
+
+exports.getUserRole = (request, response) => {
+    const { uid } = request.query;
+
+    const userDocRef = db.collection('users').doc(uid);
+    userDocRef
+        .get()
+        .then((userDocSnapshot) => {
+            if (userDocSnapshot.exists) {
+                const userData = userDocSnapshot.data();
+                const role = userData.role;
+                return response.json(role);
+            } else {
+                response.status(404).send('User document does not exist');
+            }
+        })
+        .catch((error) => {
+            console.error('Error retrieving user role:', error); // Add this line to log the error
+            response.status(500).send('Error retrieving user role');
+        });
+};
