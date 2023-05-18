@@ -1,16 +1,17 @@
 const admin = require('firebase-admin');
-const serviceAccount = require('./service_account');
+const serviceAccount = require('../service_account.json');
 
-// Initialize the Firebase Admin SDK
-admin.initializeApp({
-    credential: admin.credential.cert(serviceAccount)
-});
+// Initialize the Firebase Admin SDK if it's not already initialized
+if (!admin.apps.length) {
+    admin.initializeApp({
+      credential: admin.credential.cert(serviceAccount)
+    });
+  }
 
 // Get a reference to your Firestore database
 const db = admin.firestore();
 
 exports.getUsers = (request, response) => {
-    console.log("you are in getUsers method !");
     const usersRef = db.collection('users');
     usersRef.get()
         .then(snapshot => {
@@ -28,7 +29,6 @@ exports.getUsers = (request, response) => {
 
 exports.addUser = (request, response) => {
     const { uid, email, role } = request.body;
-    console.log(`Adding user: email=${email}, role=${role}`);
 
     const usersRef = db.collection('users');
 
@@ -52,7 +52,6 @@ exports.addUser = (request, response) => {
                     .set(userData)
                     .then(() => {
                         const message = `User with email ${email} and role ${userData.role} added successfully`;
-                        console.log(message);
                         response.send({ success: true, message });
                     })
                     .catch((error) => {
