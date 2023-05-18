@@ -2,9 +2,12 @@ const functions = require("firebase-functions");
 const { geocodeRequest } = require("./geocode");
 const { placesRequest } = require("./places");
 const { payRequest } = require("./pay");
+
 const { addUser,getUsers,getUserRole } = require("./users");
-const { getShopDetails } = require("./shops");
-const { updateShopDetails } = require("./shops");
+
+const { getShopDetails, updateShopDetails } = require("./shops");
+
+const { getCity } = require("./cities");
 
 const { Client } = require("@googlemaps/google-maps-services-js");
 // const stripeClient = require("stripe")(functions.config().stripe.key);
@@ -41,4 +44,10 @@ exports.getShopDetails = functions.https.onRequest((request, response) => {
 });
 exports.updateShopDetails = functions.https.onRequest((request, response) => {
   updateShopDetails(request, response);
+});
+
+
+/********************************Cities servecies***************************************/
+exports.getCity = functions.https.onRequest((request, response) => {
+  getCity(request, response);
 });
