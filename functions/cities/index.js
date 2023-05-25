@@ -11,7 +11,7 @@ if (!admin.apps.length) {
 // Get a reference to your Firestore database
 const db = admin.firestore();
 
-exports.getCity = (request, response) => {
+exports.getCityByName = (request, response) => {
     const cityName = request.query.cityName; 
   
     const cityRef = db.collection('cities').doc(cityName);

@@ -3,11 +3,14 @@ const { geocodeRequest } = require("./geocode");
 const { placesRequest } = require("./places");
 const { payRequest } = require("./pay");
 
-const { addUser,getUsers,getUserRole } = require("./users");
+const { addUser, getUsers, getUserRole } = require("./users");
 
-const { getShopDetails, updateShopDetails } = require("./shops");
+const { getShopDetailsByOwnerUid, updateShopDetails, getShopsByCityName, getShopMenuByShopUid } = require("./shops");
 
-const { getCity } = require("./cities");
+const { getCityByName } = require("./cities");
+
+const { getOrdersByUserUid, getOrdersByOrderUid  } = require("./orders");
+
 
 const { Client } = require("@googlemaps/google-maps-services-js");
 // const stripeClient = require("stripe")(functions.config().stripe.key);
@@ -39,15 +42,28 @@ exports.getUserRole = functions.https.onRequest((request, response) => {
 
 
 /********************************Shops servecies***************************************/
-exports.getShopDetails = functions.https.onRequest((request, response) => {
-  getShopDetails(request, response);
+exports.getShopDetailsByOwnerUid = functions.https.onRequest((request, response) => {
+  getShopDetailsByOwnerUid(request, response);
 });
 exports.updateShopDetails = functions.https.onRequest((request, response) => {
   updateShopDetails(request, response);
 });
-
+exports.getShopsByCityName = functions.https.onRequest((request, response) => {
+  getShopsByCityName(request, response);
+});
+exports.getShopMenuByShopUid = functions.https.onRequest((request, response) => {
+  getShopMenuByShopUid(request, response);
+});
 
 /********************************Cities servecies***************************************/
-exports.getCity = functions.https.onRequest((request, response) => {
-  getCity(request, response);
+exports.getCityByName = functions.https.onRequest((request, response) => {
+  getCityByName(request, response);
+});
+
+/********************************Orders servecies***************************************/
+exports.getOrdersByUserUid  = functions.https.onRequest((request, response) => {
+  getOrdersByUserUid (request, response);
+});
+exports.getOrdersByOrderUid  = functions.https.onRequest((request, response) => {
+  getOrdersByOrderUid (request, response);
 });

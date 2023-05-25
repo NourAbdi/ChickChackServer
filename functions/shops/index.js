@@ -12,7 +12,7 @@ if (!admin.apps.length) {
 // Get a reference to your Firestore database
 const db = admin.firestore();
 
-exports.getShopDetails = (request, response) => {
+exports.getShopDetailsByOwnerUid = (request, response) => {
     const { shopOwnerUid } = request.query;
 
     const shopsRef = db.collection("shops");
@@ -37,21 +37,76 @@ exports.getShopDetails = (request, response) => {
 exports.updateShopDetails = (request, response) => {
     const { shopUid } = request.query;
     const updatedShopDetails = request.body;
-  
-    console.log("shopUid:", shopUid);
-    console.log("Updated shop details:", updatedShopDetails);
-  
+
     const shopRef = db.collection("shops").doc(shopUid);
-  
+
     shopRef
-      .update(updatedShopDetails)
-      .then(() => {
-        response.send("Shop details updated successfully");
-      })
-      .catch((error) => {
-        console.error("Error updating shop details:", error);
-        response.status(500).send("Error updating shop details");
-      });
+        .update(updatedShopDetails)
+        .then(() => {
+            response.send("Shop details updated successfully");
+        })
+        .catch((error) => {
+            console.error("Error updating shop details:", error);
+            response.status(500).send("Error updating shop details");
+        });
+};
+
+exports.getShopsByCityName = async (request, response) => {
+    try {
+        const { cityName } = request.query;
+
+        const shopsRef = db.collection("shops");
+        const query = shopsRef.where("city", "==", cityName);
+        const snapshot = await query.get();
+
+        if (snapshot.empty) {
+            response.status(404).send("No shops found in the city");
+            return;
+        }
+
+        const fetchedShops = [];
+        snapshot.forEach((doc) => {
+            const shopData = doc.data();
+            fetchedShops.push(shopData);
+        });
+
+        response.send(fetchedShops);
+    } catch (error) {
+        console.error("Error getting shops by city:", error);
+        response.status(500).send("Error getting shops by city");
+    }
+};
+
+exports.getShopMenuByShopUid = async (request, response) => {
+    try {
+      const { shopUid } = request.query;
+  
+      const shopsRef = db.collection("shops").doc(shopUid);
+      const shopSnapshot = await shopsRef.get();
+  
+      if (!shopSnapshot.exists) {
+        response.status(404).send("Shop not found");
+        return;
+      }
+  
+      const shopData = shopSnapshot.data();
+      const menuItems = [];
+  
+      // Fetch menu items based on item references
+      for (const itemUid of shopData.menu) {
+        const itemRef = db.collection("items").doc(itemUid);
+        const itemSnapshot = await itemRef.get();
+  
+        if (itemSnapshot.exists) {
+          const itemData = itemSnapshot.data();
+          menuItems.push(itemData);
+        }
+      }
+  
+      response.send(menuItems);
+    } catch (error) {
+      console.error("Error getting shop menu:", error);
+      response.status(500).send("Error getting shop menu");
+    }
   };
   
-
