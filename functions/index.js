@@ -5,7 +5,7 @@ const { payRequest } = require("./pay");
 
 const { addUser, getUsers, getUserRole } = require("./users");
 
-const { getShopDetailsByOwnerUid, updateShopDetails, getShopsByCityName, getShopMenuByShopUid } = require("./shops");
+const { updateShopDetails, getShopsByCityName, getShopMenuByShopUid, getShopByShopUid, getShopByOwnerUid } = require("./shops");
 
 const { getCityByName } = require("./cities");
 
@@ -42,9 +42,6 @@ exports.getUserRole = functions.https.onRequest((request, response) => {
 
 
 /********************************Shops servecies***************************************/
-exports.getShopDetailsByOwnerUid = functions.https.onRequest((request, response) => {
-  getShopDetailsByOwnerUid(request, response);
-});
 exports.updateShopDetails = functions.https.onRequest((request, response) => {
   updateShopDetails(request, response);
 });
@@ -53,6 +50,12 @@ exports.getShopsByCityName = functions.https.onRequest((request, response) => {
 });
 exports.getShopMenuByShopUid = functions.https.onRequest((request, response) => {
   getShopMenuByShopUid(request, response);
+});
+exports.getShopByShopUid = functions.https.onRequest((request, response) => {
+  getShopByShopUid(request, response);
+});
+exports.getShopByOwnerUid = functions.https.onRequest((request, response) => {
+  getShopByOwnerUid(request, response);
 });
 
 /********************************Cities servecies***************************************/

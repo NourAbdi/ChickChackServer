@@ -12,27 +12,6 @@ if (!admin.apps.length) {
 // Get a reference to your Firestore database
 const db = admin.firestore();
 
-exports.getShopDetailsByOwnerUid = (request, response) => {
-    const { shopOwnerUid } = request.query;
-
-    const shopsRef = db.collection("shops");
-    const query = shopsRef.where("shopOwnerUid", "==", shopOwnerUid);
-
-    query
-        .get()
-        .then((snapshot) => {
-            if (snapshot.empty) {
-                response.status(404).send("Shop not found");
-            } else {
-                const shopData = snapshot.docs[0].data();
-                response.send(shopData);
-            }
-        })
-        .catch((error) => {
-            console.error("Error getting shop details:", error);
-            response.status(500).send("Error getting shop details");
-        });
-};
 
 exports.updateShopDetails = (request, response) => {
     const { shopUid } = request.query;
@@ -79,34 +58,79 @@ exports.getShopsByCityName = async (request, response) => {
 
 exports.getShopMenuByShopUid = async (request, response) => {
     try {
-      const { shopUid } = request.query;
-  
-      const shopsRef = db.collection("shops").doc(shopUid);
-      const shopSnapshot = await shopsRef.get();
-  
-      if (!shopSnapshot.exists) {
-        response.status(404).send("Shop not found");
-        return;
-      }
-  
-      const shopData = shopSnapshot.data();
-      const menuItems = [];
-  
-      // Fetch menu items based on item references
-      for (const itemUid of shopData.menu) {
-        const itemRef = db.collection("items").doc(itemUid);
-        const itemSnapshot = await itemRef.get();
-  
-        if (itemSnapshot.exists) {
-          const itemData = itemSnapshot.data();
-          menuItems.push(itemData);
+        const { shopUid } = request.query;
+
+        const shopsRef = db.collection("shops").doc(shopUid);
+        const shopSnapshot = await shopsRef.get();
+
+        if (!shopSnapshot.exists) {
+            response.status(404).send("Shop not found");
+            return;
         }
-      }
-  
-      response.send(menuItems);
+
+        const shopData = shopSnapshot.data();
+        const menuItems = [];
+
+        // Fetch menu items based on item references
+        for (const itemUid of shopData.menu) {
+            const itemRef = db.collection("items").doc(itemUid);
+            const itemSnapshot = await itemRef.get();
+
+            if (itemSnapshot.exists) {
+                const itemData = itemSnapshot.data();
+                menuItems.push(itemData);
+            }
+        }
+
+        response.send(menuItems);
     } catch (error) {
-      console.error("Error getting shop menu:", error);
-      response.status(500).send("Error getting shop menu");
+        console.error("Error getting shop menu:", error);
+        response.status(500).send("Error getting shop menu");
     }
-  };
-  
+};
+
+
+exports.getShopByShopUid = async (request, response) => {
+    try {
+        const { shopUid } = request.query;
+
+        const shopsRef = db.collection("shops").doc(shopUid);
+        const shopSnapshot = await shopsRef.get();
+
+        if (!shopSnapshot.exists) {
+            response.status(404).send("Shop not found");
+            return;
+        }
+
+        const shopData = shopSnapshot.data();
+
+        response.send(shopData);
+    } catch (error) {
+        console.error("Error getting shop :", error);
+        response.status(500).send("Error getting shop");
+    }
+};
+
+exports.getShopByOwnerUid = async (request, response) => {
+    try {
+        const { ownerUid } = request.query;
+        
+        const shopsRef = db.collection("shops");
+        const querySnapshot = await shopsRef.where("shopOwnerUid", "==", ownerUid).get();
+        
+        if (querySnapshot.empty) {
+            response.status(404).send("Shop not found");
+            return;
+        }
+        
+        const shopData = [];
+        querySnapshot.forEach((doc) => {
+            shopData.push(doc.data());
+        });
+
+        response.send(shopData);
+    } catch (error) {
+        console.error("Error getting shop:", error);
+        response.status(500).send("Error getting shop");
+    }
+};
