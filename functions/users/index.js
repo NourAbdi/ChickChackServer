@@ -1,5 +1,6 @@
 const admin = require('firebase-admin');
 const serviceAccount = require('../service_account.json');
+const url = require("url");
 
 // Initialize the Firebase Admin SDK if it's not already initialized
 if (!admin.apps.length) {
@@ -11,7 +12,7 @@ if (!admin.apps.length) {
 // Get a reference to your Firestore database
 const db = admin.firestore();
 
-exports.getUsers = (request, response) => {
+module.exports.getUsers = (request, response) => {
     const usersRef = db.collection('users');
     usersRef.get()
         .then(snapshot => {
@@ -27,7 +28,7 @@ exports.getUsers = (request, response) => {
         });
 };
 
-exports.addUser = (request, response) => {
+module.exports.addUser = (request, response) => {
     const { uid, email, role } = request.body;
 
     const usersRef = db.collection('users');
@@ -66,7 +67,7 @@ exports.addUser = (request, response) => {
         });
 };
 
-exports.getUserRole = (request, response) => {
+module.exports.getUserRole = (request, response) => {
     const { uid } = request.query;
 
     const userDocRef = db.collection('users').doc(uid);

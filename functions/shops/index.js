@@ -13,24 +13,37 @@ if (!admin.apps.length) {
 const db = admin.firestore();
 
 
-exports.updateShopDetails = (request, response) => {
-    const { shopUid } = request.query;
-    const updatedShopDetails = request.body;
+module.exports.updateShopDetails = async (request, response) => {
+    try {
+      const { shopUid } = request.query;
+      const updatedShopDetails = request.body;
+      const shopRef = db.collection("shops").doc(shopUid);
+      const shopSnapshot = await shopRef.get();
+  
+      if (!shopSnapshot.exists) {
+        response.status(404).send("Shop not found");
+        return;
+      }
+  
+      const existingShopData = shopSnapshot.data();
+  
+      const updatedShopData = {
+        ...existingShopData,
+        workingHours: updatedShopDetails.workingHours,
+        isTemporaryClose: updatedShopDetails.isTemporaryClose,
+      };
+  
+      await shopRef.update(updatedShopData);
+  
+      response.send("Shop details updated successfully");
+    } catch (error) {
+      console.error("Error updating shop details:", error);
+      response.status(500).send("Error updating shop details");
+    }
+  };
+  
 
-    const shopRef = db.collection("shops").doc(shopUid);
-
-    shopRef
-        .update(updatedShopDetails)
-        .then(() => {
-            response.send("Shop details updated successfully");
-        })
-        .catch((error) => {
-            console.error("Error updating shop details:", error);
-            response.status(500).send("Error updating shop details");
-        });
-};
-
-exports.getShopsByCityName = async (request, response) => {
+module.exports.getShopsByCityName = async (request, response) => {
     try {
         const { cityName } = request.query;
 
@@ -56,7 +69,7 @@ exports.getShopsByCityName = async (request, response) => {
     }
 };
 
-exports.getShopMenuByShopUid = async (request, response) => {
+module.exports.getShopMenuByShopUid = async (request, response) => {
     try {
         const { shopUid } = request.query;
 
@@ -90,7 +103,7 @@ exports.getShopMenuByShopUid = async (request, response) => {
 };
 
 
-exports.getShopByShopUid = async (request, response) => {
+module.exports.getShopByShopUid = async (request, response) => {
     try {
         const { shopUid } = request.query;
 
@@ -111,7 +124,7 @@ exports.getShopByShopUid = async (request, response) => {
     }
 };
 
-exports.getShopByOwnerUid = async (request, response) => {
+module.exports.getShopByOwnerUid = async (request, response) => {
     try {
         const { ownerUid } = request.query;
         

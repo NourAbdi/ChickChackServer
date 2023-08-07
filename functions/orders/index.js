@@ -1,5 +1,6 @@
 const admin = require('firebase-admin');
 const serviceAccount = require('../service_account.json');
+const url = require("url");
 
 // Initialize the Firebase Admin SDK if it's not already initialized
 if (!admin.apps.length) {
@@ -11,7 +12,7 @@ if (!admin.apps.length) {
 // Get a reference to your Firestore database
 const db = admin.firestore();
 
-exports.getOrdersByOrderUid = async (request, response) => {
+module.exports.getOrdersByOrderUid = async (request, response) => {
     const { orderUid } = request.query;
     try {
         const orderDoc = await db.collection('orders').doc(orderUid).get();
@@ -30,7 +31,7 @@ exports.getOrdersByOrderUid = async (request, response) => {
 };
 
 
-exports.getOrdersByUserUid = async (request, response) => {
+module.exports.getOrdersByUserUid = async (request, response) => {
     const { userUid } = request.query;
 
     try {
@@ -53,3 +54,35 @@ exports.getOrdersByUserUid = async (request, response) => {
         response.status(500).json({ error: 'Failed to get orders' });
     }
 };
+
+module.exports.saveOrder = async (request, response) => {
+    const { order } = request.body;
+
+    try {
+        const orderRef = await db.collection("orders").add(order);
+        const orderUid = orderRef.id;
+        response.json({ orderUid });
+    } catch (error) {
+        console.error("Error saving order:", error);
+        response.status(500).json({ error: "Failed to save the order" });
+    }
+};
+
+module.exports.getPastOrdersByUserUid = async (request, response) => {
+    const { userUid } = request.query;
+
+    try {
+        const ordersSnapshot = await db
+            .collection("orders")
+            .where("userUid", "==", userUid)
+            .get();
+
+        const orders = ordersSnapshot.docs.map((doc) => doc.data());
+
+        response.json({ orders });
+    } catch (error) {
+        console.error("Error getting past orders:", error);
+        response.status(500).json({ error: "Failed to get past orders" });
+    }
+};
+
